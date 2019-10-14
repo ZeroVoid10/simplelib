@@ -53,6 +53,7 @@ static void nrf_spi_delay(void);
  *******************************************************************************/
 uint8_t nrf_rx_data[32];
 uint8_t nrf_tx_data[32];
+uint8_t nrf_rx_len;
 #ifdef SL_DEBUG
 can_msg msg;
 #endif // SL_DEBUG
@@ -145,6 +146,7 @@ void nrf_stop(void) {
  * @return  1       Send failed after retries
  */
 uint8_t nrf_send_data(uint8_t *data, int len) {
+
     uint8_t status;
 	uint8_t retval = 0;
 
@@ -170,28 +172,28 @@ uint8_t nrf_send_data(uint8_t *data, int len) {
 	}
 
 	NRF_CE_ENABLE();
-    do
-    {
-		//HAL_Delay(20);
-        status = _nrf_get_status();
-		#ifdef SL_DEBUG
-		conf = nrf_read_reg_byte(NRF_REG_CONFIG);
-		uprintf_("status %x\r\nconfig %x\r\n", status, conf);
-		#endif // SL_DEBUG
-        if (NRF_STATUS_GET_MAX_RT(status)) {
-			_nrf_clear_maxrt_irq();
-            retval = 1;
-            break;
-        }
-    } while ( NRF_STATUS_GET_TX_DS(status) == 0);
+    // do
+    // {
+	// 	//HAL_Delay(20);
+    //     status = _nrf_get_status();
+	// 	#ifdef SL_DEBUG
+	// 	conf = nrf_read_reg_byte(NRF_REG_CONFIG);
+	// 	uprintf_("status %x\r\nconfig %x\r\n", status, conf);
+	// 	#endif // SL_DEBUG
+    //     if (NRF_STATUS_GET_MAX_RT(status)) {
+	// 		_nrf_clear_maxrt_irq();
+    //         retval = 1;
+    //         break;
+    //     }
+    // } while ( NRF_STATUS_GET_TX_DS(status) == 0);
     
-	// Restore pipe0 address
-	if (!tx_pipe0_addr_eq && nrf_config.send_crc_ack) {
-		_nrf_set_rx_addr(0, nrf_rx_addr[0], nrf_addr_width);
-	}
-	NRF_CE_DISABLE();
-	_nrf_set_mode(NRF_PRX);
-    nrf_send_callback();
+	// // Restore pipe0 address
+	// if (!tx_pipe0_addr_eq && nrf_config.send_crc_ack) {
+	// 	_nrf_set_rx_addr(0, nrf_rx_addr[0], nrf_addr_width);
+	// }
+	// NRF_CE_DISABLE();
+	// _nrf_set_mode(NRF_PRX);
+    // nrf_send_callback();
 
 	return retval;
 }
@@ -238,6 +240,24 @@ uint8_t nrf_read_rx_data(uint8_t *data, uint8_t *len, NRF_PIPE *pipe) {
 	return retval;
 }
 
+void nrf_irq_handle(void) {
+	uint8_t status = _nrf_get_status();
+	if (NRF_STATUS_GET_RX_DR(status)) {
+		nrf_read_rx_data(nrf_rx_data, &nrf_rx_len, NULL);
+	} else if (NRF_STATUS_GET_TX_DS(status)) {
+		if (!tx_pipe0_addr_eq && nrf_config.send_crc_ack) {
+			_nrf_set_rx_addr(0, nrf_rx_addr[0], nrf_addr_width);
+		}
+		NRF_CE_DISABLE();
+		_nrf_set_mode(NRF_PRX);
+		nrf_send_callback();
+	} else if (NRF_STATUS_GET_MAX_RT(status)) {
+		_nrf_clear_maxrt_irq();
+		NRF_CE_DISABLE();
+		_nrf_set_mode(NRF_PRX);
+	}
+}
+
 void nrf_set_tx_addr(uint8_t *addr, uint8_t addr_len) {
     memcpy(nrf_tx_addr, addr, addr_len);
 	nrf_addr_width = addr_len;
@@ -258,11 +278,6 @@ void nrf_set_rx_addr(NRF_PIPE pipe, uint8_t *addr, uint8_t addr_len) {
  * NRF Driver Functions
  *******************************************************************************/
 /* 0x00 Configuration Register -----------------------------------------------------*/
-// TODO: ZeroVoid	due:compelete	todo
-void _nrf_enable_irq(uint8_t irq) {
-
-}
-
 /**
  * @brief	设置CRC校验位个数
  * @param   crc_type @see NRF_CRC
