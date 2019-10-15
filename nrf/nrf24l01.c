@@ -70,7 +70,7 @@ static NRF_ConfigTypeDef nrf_config = {
     retry_delay : NRF_RETR_DELAY_500US,
     retries : 10,
     channel : 0,
-	pipes : 0x1,
+	pipes : 0x3,
     address : {0x10*NRF_ADDR_COF, 0x11*NRF_ADDR_COF, 0x12*NRF_ADDR_COF, 0x11*NRF_ADDR_COF, 0x10*NRF_ADDR_COF},
     addr_len : NRF_AW_5,
     send_crc_ack : true
@@ -109,7 +109,7 @@ void nrf_init(NRF_ConfigTypeDef *config) {
 	_nrf_set_speed(nrf_config.speed);
 	_nrf_set_address_width(nrf_config.addr_len);
 	_nrf_enable_pipe_autoack(nrf_config.pipes);
-	_nrf_enable_features(NRF_FEATURE_ACK_PAYLOAD | NRF_FEATURE_DPL);
+	_nrf_enable_features(NRF_FEATURE_DPL);
 	//nrf_write_reg_byte(NRF_REG_RX_PW_P0, 10);
 
 	_nrf_enable_pipe_address(nrf_config.pipes);
@@ -122,6 +122,7 @@ void nrf_init(NRF_ConfigTypeDef *config) {
 	_nrf_set_tx_addr(nrf_tx_addr, nrf_addr_width);
 	_nrf_set_rx_addr(NRF_PIPE_0, nrf_rx_addr[NRF_PIPE_0], nrf_addr_width);
 	_nrf_set_mode(NRF_PRX);
+	NRF_CE_ENABLE();
 
 	if (nrf_config.power != NRF_POWER_DOWN) {
         _nrf_set_power(NRF_POWER_UP);
@@ -234,6 +235,7 @@ uint8_t nrf_read_rx_data(uint8_t *data, uint8_t *len, NRF_PIPE *pipe) {
 		}
     }
 
+	_nrf_clear_rx_irq();
 	if(retval >= 0) {
     	nrf_receive_callback(data, *len);
 	}
@@ -245,28 +247,34 @@ void nrf_irq_handle(void) {
 	if (NRF_STATUS_GET_RX_DR(status)) {
 		nrf_read_rx_data(nrf_rx_data, &nrf_rx_len, NULL);
 	} else if (NRF_STATUS_GET_TX_DS(status)) {
+		_nrf_clear_tx_irq();
 		if (!tx_pipe0_addr_eq && nrf_config.send_crc_ack) {
 			_nrf_set_rx_addr(0, nrf_rx_addr[0], nrf_addr_width);
 		}
+		_nrf_flush_tx();
 		NRF_CE_DISABLE();
 		_nrf_set_mode(NRF_PRX);
-		nrf_send_callback();
+		nrf_spi_delay();
+		NRF_CE_ENABLE();
 	} else if (NRF_STATUS_GET_MAX_RT(status)) {
 		_nrf_clear_maxrt_irq();
+		_nrf_flush_tx();
 		NRF_CE_DISABLE();
 		_nrf_set_mode(NRF_PRX);
+		nrf_spi_delay();
+		NRF_CE_ENABLE();
 	}
 }
 
-void nrf_set_tx_addr(uint8_t *addr, uint8_t addr_len) {
-    memcpy(nrf_tx_addr, addr, addr_len);
+void nrf_set_tx_addr(uint8_t *addr, NRF_AW addr_len) {
+    memcpy(nrf_tx_addr, addr, addr_len + 2);
 	nrf_addr_width = addr_len;
 	tx_pipe0_addr_eq = memcmp(nrf_rx_addr[0], nrf_tx_addr, nrf_addr_width) == 0;
 	_nrf_set_tx_addr(nrf_tx_addr, nrf_addr_width);
 }
 
-void nrf_set_rx_addr(NRF_PIPE pipe, uint8_t *addr, uint8_t addr_len) {
-    memcpy(nrf_rx_addr[pipe], addr, addr_len);
+void nrf_set_rx_addr(NRF_PIPE pipe, uint8_t *addr, NRF_AW addr_len) {
+    memcpy(nrf_rx_addr[pipe], addr, addr_len + 2);
 	nrf_addr_width = addr_len;
 	tx_pipe0_addr_eq = memcmp(nrf_rx_addr[0], nrf_tx_addr, nrf_addr_width) == 0;
 	nrf_rx_addr_set[pipe] = true;
@@ -332,17 +340,18 @@ void _nrf_set_power(NRF_POWER power) {
 void _nrf_set_mode(NRF_MODE mode) {
     uint8_t config = nrf_read_reg_byte(NRF_REG_CONFIG);
     if ((config & NRF_CONFIG_PRIM_RX) != mode) {
-        if (mode) {
-            config |= (NRF_CONFIG_PRIM_RX);
-        } else {
-            config &= ~(NRF_CONFIG_PRIM_RX);
-        }
-        nrf_write_reg_byte(NRF_REG_CONFIG, config);
 		NRF_CE_DISABLE();
 		nrf_spi_delay();
-		nrf_spi_delay();
+        if (mode) {
+            config |= (NRF_CONFIG_PRIM_RX);
+        	nrf_write_reg_byte(NRF_REG_CONFIG, config);
+        } else {
+            config &= ~(NRF_CONFIG_PRIM_RX);
+        	nrf_write_reg_byte(NRF_REG_CONFIG, config);
+			NRF_CE_ENABLE();
+			nrf_spi_delay();
+        }
     }
-	NRF_CE_ENABLE();
 }
 
 /* 0x01-x03 -----------------------------------------------------*/
