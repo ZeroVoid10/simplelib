@@ -24,10 +24,12 @@ extern "C" {
 /*******************************************************************************
  * Include
  *******************************************************************************/
+#include "simplelib_cfg.h"
+
+#ifdef SL_NRF
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "simplelib_config.h"
 
 
 /*******************************************************************************
@@ -163,8 +165,10 @@ typedef struct {
 typedef struct {
 	SPI_HandleTypeDef *hspi;
 	NRF_ConfigTypeDef *conf;
-	NRF_MODE mode;
 	uint8_t *tx_data;
+	uint8_t *rx_data;
+	uint8_t *tx_addr;
+	uint8_t **rx_addr;
 } NRF_Handle;
 
 /*******************************************************************************
@@ -293,8 +297,9 @@ void nrf_init(NRF_ConfigTypeDef *config);
 void nrf_stop(void);
 uint8_t nrf_send_data(uint8_t *data, int len);
 uint8_t nrf_read_rx_data(uint8_t *data, uint8_t *len, NRF_PIPE *pipe); 
-void nrf_set_tx_addr(uint8_t *addr, uint8_t addr_len);
-void nrf_set_rx_addr(NRF_PIPE pipe, uint8_t *addr, uint8_t addr_len);
+void nrf_set_tx_addr(uint8_t *addr, NRF_AW addr_len);
+void nrf_set_rx_addr(NRF_PIPE pipe, uint8_t *addr, NRF_AW addr_len);
+void nrf_irq_handle(void);
 __weak void nrf_receive_callback(uint8_t *data, int len);
 __weak void nrf_send_callback(void);
 
@@ -302,8 +307,6 @@ __weak void nrf_send_callback(void);
  * NRF Driver Functions
  *******************************************************************************/
 /* 0x00 Configuration Register -----------------------------------------------------*/
-// TODO: ZeroVoid	due:10/10	Done Interrupt Choose
-void _nrf_enable_irq(uint8_t irq);
 void _nrf_set_crc_type(NRF_CRC crc_type);
 void _nrf_set_power(NRF_POWER power);
 void _nrf_set_mode(NRF_MODE mode);
@@ -366,6 +369,8 @@ void _nrf_enable_features(uint8_t features);
 void _nrf_flush_tx(void);
 void _nrf_flush_rx(void);
 void _nrf_flush_all(void);
+
+#endif // SL_NRF
 
 
 #ifdef __cplusplus
