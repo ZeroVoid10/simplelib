@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 #include "can_utils.h"
-#include "can.h"
+#ifdef SL_CAN
 
 extern int can_data_show_flag;
     
@@ -13,6 +13,7 @@ void can_suc_rx(can_msg *data);
 void can_show_button(can_msg *data);
 void can_show_rocker(can_msg *data);
     
+#endif // SL_CAN
 #ifdef __cplusplus
 }
 #endif

@@ -1,6 +1,9 @@
 #include "can_func.h"
+#ifdef SL_CAN
+
+#ifdef SL_DEBUG
 #include "cmd.h"
-#include "simplelib_cfg.h"
+#endif // SL_DEBUG
 
 void can_func_init() {
     #ifdef SL_DEBUG
@@ -9,6 +12,8 @@ void can_func_init() {
     can_callback_add(324, can_show_rocker);
     #endif
 }
+
+#ifdef SL_DEBUG
 
 void can_suc_rx(can_msg *data) {
     uprintf("can rx ok\r\n");
@@ -27,3 +32,6 @@ void can_show_rocker(can_msg *data) {
                                 (int16_t)data->ui16[3]);
     }
 }
+#endif // SL_DEBUG
+
+#endif // SL_CAN

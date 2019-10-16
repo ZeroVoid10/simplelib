@@ -24,7 +24,7 @@
 #define FLASH_SAVE_ADDR  0X080A0000     //设置FLASH 保存地址(必须为4的倍数，且所在扇区,要大于本代码所占用到的扇区.
 #define FLASH_WAITETIME  50000          //FLASH等待超时时间
 
-extern float flash_data[4];
+extern float flash_data[FLASH_SIZE];
 extern float flash_chassis_init_x, flash_chassis_init_y;
 
 //FLASH 扇区的起始地址

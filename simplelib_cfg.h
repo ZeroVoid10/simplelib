@@ -22,23 +22,29 @@ extern "C" {
 /*******************************************************************************
  * SimpleLib Configuration
  * @note	SL Simplelib or Stm32Lib
- * @note    vscode comment shortcut: ctrl + /
+ * @note    VSCode comment shortcut: ctrl + /
  *******************************************************************************/
 #define SL_CAN                          // CAN通信模块
 #define SL_CMD_USART                    // 串口通信模块
 #define SL_CMD_USART_DMA                // 串口通信模块，使用DMA传输
+#define SL_FLASH                        // Flash 模块
 // #define SL_NRF                          // NRF通信模块
+#define SL_UTILS					    // 通用工具函封装
 
 #define SL_DEBUG                        // Simplelib debug macro
 
+/* Flash Configuration -----------------------------------------------------*/
+#ifdef SL_FLASH
+#define FLASH_SIZE                      10 // Flash float数组大小
+#endif // SL_FLASH
+
 /* NRF Configuration -----------------------------------------------------*/
 #ifdef SL_NRF
-// TODO: ZeroVoid	due:10/14	模块化NRF模块
 
 #ifdef STM32F407xx 
 #include "gpio.h"
 #include "spi.h"
-#define NRF_ADDR_COF					1 // 变化参数
+#define NRF_ADDR_COF					1 // 接收地址变化参数,方便测试
 #define NRF_SPI_Handle                  hspi3
 #define NRF_SPI_CSN_PIN                 GPIO_PIN_15
 #define NRF_SPI_CSN_GPIO_PORT           GPIOA

@@ -15,6 +15,7 @@ extern "C" {
 
 #include "can.h"
 #include "simplelib_cfg.h"
+#ifdef SL_CAN
 
 typedef union{
     char ch[8];
@@ -48,6 +49,8 @@ void HAL_CAN_RxFifo0FullCallback(CAN_HandleTypeDef *hcan);
 #ifdef DEBUG
 void can_send_test(void);
 #endif //DEBUG
+
+#endif // SL_CAN
 
 #ifdef __cplusplus
 }

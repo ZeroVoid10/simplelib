@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#include "simplelib_cfg.h"
+#ifdef SL_UTILS
+
 /**
  * @brief	宏数据处理函数
  * @note	切勿在传入带有副作用的参数.e.g. *p++
@@ -28,6 +31,8 @@ typedef struct{
 float PID_Release(PID_Struct *PID,float target,float now);
 void reset_PID(PID_Struct * s);
 void PID_init();
+
+#endif // SL_UTILS
 
 #ifdef __cplusplus
 }

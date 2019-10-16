@@ -16,10 +16,7 @@
 //读取指定地址的字(32位数据) 
 //faddr:读地址 
 //返回值:对应数据.
-//float flash_chassis_init_x = 0, flash_chassis_init_y = 0;
-//float flash_saved_x_red = 0, flash_saved_y_red = 0;
-//float flash_saved_x_blue = 0, flash_saved_y_blue = 0;
-float flash_data[4]={0,0,0,0};//烧进flash中的14个数据
+float flash_data[FLASH_SIZE]={0};
 u8 STMFLASH_GetFlashSector(u32 addr);
 
 void write_prams()

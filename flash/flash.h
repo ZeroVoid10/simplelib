@@ -4,6 +4,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "main.h"
+#include "simplelib_cfg.h"
 
 #define u32 uint32_t
 #define u16 uint16_t

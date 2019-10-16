@@ -11,6 +11,8 @@
 // TODO: ZeroVoid	due:10/7	优化多中断管理
 
 #include "can_utils.h"
+#ifdef SL_CAN
+
 #include "hash.h"
 #include "cmd.h"
 #include "can_func.h"
@@ -205,3 +207,5 @@ static unsigned int hash_id(const void* id) {
 static int id_cmp(const void* a, const void* b) {
     return ( *((unsigned int*)a) == *((unsigned int*)b) )? 0:1;
 }
+
+#endif // SL_CAN
