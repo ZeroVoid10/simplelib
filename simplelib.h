@@ -5,11 +5,10 @@
 extern "C" {
 #endif
 
-#include "usart.h"
-
 #include "simplelib_cfg.h"
 
-#ifdef SL_CMD_USART_DMA
+#ifdef SL_CMD
+#include "usart.h"
 #include "cmd.h"
 #include "cmd_func.h"
 #endif
@@ -23,6 +22,7 @@ extern "C" {
 #include "nrf24l01.h"
 #endif
 
+// TODO: ZeroVoid	due:10/23	分离组件,减小粒度
 void simplelib_init(UART_HandleTypeDef *cmd_usart, CAN_HandleTypeDef *hcan);
 void simplelib_run(void);
 

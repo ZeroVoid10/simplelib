@@ -16,6 +16,9 @@ extern "C" {
 #define Min(A, B)            ((A) <= (B) ? (A):(B))
 #define Max(A, B)			 ((A) >= (B) ? (A):(B))
 
+#define SL_OK				 0
+#define SL_ERROR			 1
+
 typedef struct{
 	float KP;
 	float KD;

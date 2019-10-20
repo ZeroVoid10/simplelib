@@ -6,11 +6,12 @@
  * Version:			0.1
  * Data:			2019/09/19 Thu 19:50
  *******************************************************************************/
+// TODO: ZeroVoid	due:10/23	模块化组件
 // TODO: ZeroVoid	due:10/7	优化内存分配管理
 
 #include "cmd.h"
 
-#ifdef SL_CMD_USART_DMA
+#ifdef SL_CMD_DMA
 
 #include "hash.h"
 #include <stdarg.h>
@@ -22,6 +23,9 @@
 static const char *delim = ", \r\n\0";
 static HashTable cmd_table;
 
+/**
+ * @brief	兼容V0.1保留变量
+ */
 UART_HandleTypeDef CMD_USART;
 char *cmd_argv[MAX_ARGC]; 
 uint8_t DMAaRxBuffer[DMA_BUFFER_SIZE];
@@ -29,6 +33,9 @@ char DMAUSART_RX_BUF[DMA_BUFFER_SIZE];
 int DMA_RxOK_Flag = 0;
 int buffer_count = 0;
 char uart_buffer[DMA_BUFFER_SIZE];
+
+/* Private Variables -----------------------------------------------------*/
+char cmd_dma_rx_buffer[10];
 
 
 /* private function -----------------------------------------------------*/
@@ -43,6 +50,10 @@ void usart_DMA_init(UART_HandleTypeDef *cmd_usart) {
     HAL_UART_Receive_DMA(&CMD_USART, (uint8_t *)&DMAaRxBuffer, 99);
     cmd_init();
     __HAL_UART_ENABLE_IT(&CMD_USART,UART_IT_IDLE); // 开启空闲中断
+}
+
+void cmd_dma_init(UART_HandleTypeDef *huart) {
+    //HAL_UART_Receive_DMA(&huart, )
 }
 
 /**
@@ -167,13 +178,14 @@ void uprintf(char *fmt, ...) {
     // if (HAL_UART_Transmit_DMA(&CMD_USART, (uint8_t *)print_buffer, size) != HAL_OK) {
     //     HAL_Delay(10);
     // }
+    // FIXME: ZeroVoid	2019/10/17	快速输出或某些情况下会出现卡死情况
     while(CMD_USART.hdmatx->State != HAL_DMA_STATE_READY);
     //HAL_UART_Transmit(&CMD_USART, (uint8_t*)uart_buffer, size, 1000);
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
         // 输出完成后，重新设置USART准备状态，并解锁串口,否则无法再次输出
-        huart->gState = HAL_UART_STATE_READY;
+        //huart->gState = HAL_UART_STATE_READY;
         //while(CMD_USART.hdmatx->State != HAL_DMA_STATE_READY);
         // if (huart->hdmatx != NULL) {
         //     huart->hdmatx->State = HAL_DMA_STATE_READY;
@@ -187,7 +199,7 @@ void uprintf_to(UART_HandleTypeDef *huart, char *fmt, ...) {
     size = vsnprintf(print_buffer, PRINT_BUFFER_SIZE, fmt, arg_ptr);
     va_end(arg_ptr);
 
-    //huart->gState = HAL_UART_STATE_READY;
+    huart->gState = HAL_UART_STATE_READY;
     HAL_UART_Transmit_DMA(huart, (uint8_t *)print_buffer, size);
     //while(huart->hdmatx->State != HAL_DMA_STATE_READY);
     // HAL_UART_Transmit(huart,(uint8_t *)uart_buffer,size,1000);
@@ -225,4 +237,4 @@ static void _cmd_help(const void *key, void **value, void *c1) {
     uprintf("%s: %s\r\n", key, usage);
 }
 
-#endif // SL_USART
+#endif // SL_CMD_DMA

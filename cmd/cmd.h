@@ -15,7 +15,7 @@
 
 #include "simplelib_cfg.h"
 
-#ifdef SL_CMD_USART_DMA
+#ifdef SL_CMD_DMA
 #include "main.h"
 #include "usart.h"
 #if defined(STM32F407xx) || defined(STM32F405xx)

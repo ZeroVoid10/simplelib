@@ -14,7 +14,6 @@ void can_func_init() {
 }
 
 #ifdef SL_DEBUG
-
 void can_suc_rx(can_msg *data) {
     uprintf("can rx ok\r\n");
 }

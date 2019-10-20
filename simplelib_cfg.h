@@ -24,14 +24,21 @@ extern "C" {
  * @note	SL Simplelib or Stm32Lib
  * @note    VSCode comment shortcut: ctrl + /
  *******************************************************************************/
+// #define SL_OS                           // OS系统模块
 #define SL_CAN                          // CAN通信模块
-#define SL_CMD_USART                    // 串口通信模块
-#define SL_CMD_USART_DMA                // 串口通信模块，使用DMA传输
+#define SL_CMD                          // 串口通信模块
+#define SL_CMD_DMA                          // 串口通信DMA使用
 #define SL_FLASH                        // Flash 模块
 // #define SL_NRF                          // NRF通信模块
 #define SL_UTILS					    // 通用工具函封装
 
 #define SL_DEBUG                        // Simplelib debug macro
+#define SL_COMP_V01					    // 兼容V0.1版本
+
+/* Command Configuration -----------------------------------------------------*/
+#ifdef SL_CMD_DMA
+#define CMD_MAX_LENGTH					100 // 指令最大长度
+#endif // SL_CMD_DMA
 
 /* Flash Configuration -----------------------------------------------------*/
 #ifdef SL_FLASH
