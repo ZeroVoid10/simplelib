@@ -199,7 +199,7 @@ void uprintf_to(UART_HandleTypeDef *huart, char *fmt, ...) {
     size = vsnprintf(print_buffer, PRINT_BUFFER_SIZE, fmt, arg_ptr);
     va_end(arg_ptr);
 
-    huart->gState = HAL_UART_STATE_READY;
+    //huart->gState = HAL_UART_STATE_READY;
     HAL_UART_Transmit_DMA(huart, (uint8_t *)print_buffer, size);
     //while(huart->hdmatx->State != HAL_DMA_STATE_READY);
     // HAL_UART_Transmit(huart,(uint8_t *)uart_buffer,size,1000);
