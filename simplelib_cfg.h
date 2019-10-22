@@ -14,7 +14,6 @@
  *******************************************************************************/
 #ifndef __SIMPLELIB_CONFIG_H
 #define __SIMPLELIB_CONFIG_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,10 +29,15 @@ extern "C" {
 #define SL_CMD_DMA                          // 串口通信DMA使用
 #define SL_FLASH                        // Flash 模块
 // #define SL_NRF                          // NRF通信模块
+#define SL_MOTOR_DRIVER					// 驱动卡模块
 #define SL_UTILS					    // 通用工具函封装
 
 #define SL_DEBUG                        // Simplelib debug macro
 #define SL_COMP_V01					    // 兼容V0.1版本
+
+/* Motor Driver Configuration -----------------------------------------------------*/
+#define EN_MOTOR_DRIVER                 // 使能HX 驱动卡
+#define EN_VESC_MOTOR_DRIVER             // 使能Benjamin VESC驱动卡
 
 /* Command Configuration -----------------------------------------------------*/
 #ifdef SL_CMD_DMA

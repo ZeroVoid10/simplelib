@@ -90,6 +90,7 @@ void can_send_test(void) {
  */
 int can_send_msg(uint16_t std_id, can_msg *msg) {
   TxHeader.StdId = std_id;
+  TxHeader.IDE = CAN_ID_STD;
   #ifdef DEBUG
   uprintf("%d %d %d\r\n", std_id, msg->in[0], msg->in[1]);
   #endif //DEBUG
@@ -98,6 +99,19 @@ int can_send_msg(uint16_t std_id, can_msg *msg) {
     return 1;
   }
   return 0;
+}
+
+/**
+ * @brief	can ext id send
+ * @return	0: send ok; 1: send error;
+ */
+int can_ext_send_msg(uint16_t id, can_msg *msg) {
+    TxHeader.ExtId = id;
+    TxHeader.IDE = CAN_ID_EXT;
+    if (HAL_CAN_AddTxMessage(&HCAN, &TxHeader, msg->ui8, &TxMailbox) != HAL_OK) {
+        return 1;
+    }
+    return 0;
 }
 
 void HAL_CAN_RxFifo0FullCallback(CAN_HandleTypeDef *hcan) {
@@ -161,7 +175,7 @@ void can_std_mask_filter_conf(CAN_HandleTypeDef *hcan, uint32_t *std_id, uint32_
         tmp = std_id[i]^(~std_id[0]);
         mask &= tmp;
     }
-    sFilterConfig.FilterMaskIdHigh = (mask<<5);
+    sFilterConfig.FilterMaskIdHigh = len? (mask<<5):0x0000;
     sFilterConfig.FilterMaskIdLow = (0x0000|0x02); // 0x02标准帧 数据帧
     /*
     sFilterConfig.FilterIdHigh = 0x0000;

@@ -37,6 +37,7 @@ extern int can_exc_callback_flag;
 
 void can_init(CAN_HandleTypeDef *hcan);
 int can_send_msg(uint16_t id, can_msg *msg);
+int can_ext_send_msg(uint16_t id, can_msg *msg);
 void can_callback_add(const uint32_t id, void (*callback)(can_msg *data));
 void can_exc_callback(void);
 void can_std_mask_filter_conf(CAN_HandleTypeDef *hcan, uint32_t *std_id, uint32_t len, uint32_t bank_num);
