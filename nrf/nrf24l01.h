@@ -45,7 +45,7 @@ extern "C" {
  * @brief	RX FIFO empty
  * @note	Status Resigster PX_P_NO 使用
  */
-#define NRF_RX_FIFO_EMPTY					(0b111)
+#define NRF_RX_FIFO_EMPTY					(0x07)
 
 
 /*******************************************************************************
@@ -211,18 +211,18 @@ extern uint8_t nrf_tx_data[32];
 /*******************************************************************************
  * NRF SPI Commands
  *******************************************************************************/
-#define NRF_CMD_READ_REGISTER				0b00000000 // 000AAAAA: AAAAA 5 bit register address
-#define NRF_CMD_WRITE_REGISTER				0b00100000 // 001AAAAA: AAAAA 5 bit register address
-#define NRF_CMD_READ_RX_PAYLOAD				0b01100001 // Read RX-payload
-#define NRF_CMD_WRITE_TX_PAYLOAD			0b10100000 // Write TX-payload
-#define NRF_CMD_FLUSH_TX					0b11100001 // Flush TX FIFO
-#define NRF_CMD_FLUSH_RX					0b11100010 // Flush RX FIFO
-#define NRF_CMD_REUSE_TX_PL					0b11100011 // Reuse last transmitted payload
+#define NRF_CMD_READ_REGISTER				0x00 // 000AAAAA: AAAAA 5 bit register address
+#define NRF_CMD_WRITE_REGISTER				0x20 // 001AAAAA: AAAAA 5 bit register address
+#define NRF_CMD_READ_RX_PAYLOAD				0x61 // Read RX-payload
+#define NRF_CMD_WRITE_TX_PAYLOAD			0xA0 // Write TX-payload
+#define NRF_CMD_FLUSH_TX					0xE1 // Flush TX FIFO
+#define NRF_CMD_FLUSH_RX					0xE2 // Flush RX FIFO
+#define NRF_CMD_REUSE_TX_PL					0xE3 // Reuse last transmitted payload
 //#define NRF_CMD_ACTIVATE					0b01010000 // Activate features 手册上没看到
-#define NRF_CMD_READ_RX_PAYLOAD_WIDTH		0b01100000 // Read RX-payload width
-#define NRF_CMD_WRITE_ACK_PAYLOAD			0b10101000 // 10101PPP:Write payload for ACK packet,PPP pipe 000 - 101
-#define NRF_CMD_WRITE_TX_PAYLOAD_NO_ACK		0b10110000 // Disables AUTOACK on packet
-#define NRF_CMD_NOP							0b11111111 // NOP
+#define NRF_CMD_READ_RX_PAYLOAD_WIDTH		0x60 // Read RX-payload width
+#define NRF_CMD_WRITE_ACK_PAYLOAD			0xA8 // 10101PPP:Write payload for ACK packet,PPP pipe 000 - 101
+#define NRF_CMD_WRITE_TX_PAYLOAD_NO_ACK		0xB0 // Disables AUTOACK on packet
+#define NRF_CMD_NOP							0xFF // NOP
 
 /*******************************************************************************
  * NRF Register Masks
