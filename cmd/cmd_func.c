@@ -1,18 +1,17 @@
 #include "cmd_func.h"
 #include "can_utils.h"
 #include "can_func.h"
-#include "simplelib_cfg.h"
 #include "flags.h"
 
 
 void cmd_func_init(void) {
     cmd_add("hello", "just", cmd_hello_func);
-    cmd_add("rocker", "rocker", cmd_show_rocker);
-    cmd_add("can_stop", "s", cmd_stop_rocker);
 
-    #ifdef DEBUG
+    #ifdef SL_DEBUG
     cmd_add("can_test", "test can", cmd_can_test);
     cmd_add("test_wave", "", cmd_wave_test);
+    cmd_add("rocker", "rocker", cmd_show_rocker);
+    cmd_add("can_stop", "s", cmd_stop_rocker);
     #endif
 }
 
@@ -20,6 +19,7 @@ void cmd_hello_func(int argc, char *argv[]) {
     uprintf("hello world\r\n");
 }
 
+#ifdef SL_DEBUG
 void cmd_can_test(int argc, char *argv[]) {
     uprintf("can send test\r\n");
     can_send_test();
@@ -39,3 +39,4 @@ void cmd_wave_test(int argc, char *argv[]) {
     send_wave_flag ^= 1;
     uprintf(send_wave_flag? "Wave Start\r\n":"Wave Stop\r\n");
 }
+#endif // SL_DEBUG

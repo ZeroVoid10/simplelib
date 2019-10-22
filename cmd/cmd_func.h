@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#include "simplelib_cfg.h"
 #include "cmd.h"
 
 void cmd_func_init(void);
