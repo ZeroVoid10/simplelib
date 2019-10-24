@@ -16,38 +16,59 @@
  * @author  czh modified ZeroVoid ref Benjamin
  * @note    can ext sent modified by ZeroVoid
  */
+void buffer_append_int16(uint8_t* buffer, int16_t number) {
+    uint8_t index = 0;
+	buffer[(index)++] = number >> 8;
+	buffer[(index)++] = number;
+}
+void buffer_append_int32(uint8_t* buffer, int32_t number) {
+    uint8_t index = 0;
+	buffer[(index)++] = number >> 24;
+	buffer[(index)++] = number >> 16;
+	buffer[(index)++] = number >> 8;
+	buffer[(index)++] = number;
+}
+void buffer_append_float16(uint8_t* buffer, float number, float scale) {
+    buffer_append_int16(buffer, (int16_t)(number * scale));
+}
+
+void buffer_append_float32(uint8_t* buffer, float number, float scale) {
+    buffer_append_int32(buffer, (int32_t)(number * scale));
+}
+
 /*czh add:设置对应id的占空比，已测试*/
 void vesc_set_duty(uint8_t controller_id, float duty) {
     can_msg msg;
-    msg.in[0] = (int32_t)(duty * 100000.0);
+    msg.in[1] = 0;
+	buffer_append_int32(msg.ui8, (int32_t)(duty * 1000.0));
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_DUTY << 8), &msg);
 }
 
 /*czh add:设置对应id的驱动电流，未测试*/
 void vesc_set_current(uint8_t controller_id, float current) {
-    can_msg msg;
-    msg.in[0] = (int32_t)(current * 1000.0);
+    can_msg msg = {0};
+    buffer_append_int32(msg.ui8, (int32_t)(current * 1000.0));
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_CURRENT << 8), &msg);
 }
 
 /*czh add:设置对应id的刹车电流，未测试*/
 void vesc_set_current_brake(uint8_t controller_id, float current) {
-    can_msg msg;
-    msg.in[0] = (int32_t)(current * 1000.0);
+    can_msg msg = {0};
+	buffer_append_int32(msg.ui8, (int32_t)(current * 1000.0));
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_CURRENT_BRAKE << 8), &msg);
 }
 
 /*czh add:设置对应id的转速rpm，未测试*/
 void vesc_set_rpm(uint8_t controller_id, float rpm) {
-    can_msg msg;
-    msg.in[0] = (int32_t)rpm;
+    can_msg msg = {0};
+	buffer_append_int32(msg.ui8, (int32_t)rpm);
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_RPM << 8), &msg);
 }
 
 /*czh add:设置对应id的位置，未测试*/
 void vesc_set_pos(uint8_t controller_id, float pos) {
-    can_msg msg;
-    msg.in[0] = (int32_t)(pos * 1000000.0);
+    can_msg msg = {0};
+	buffer_append_int32(msg.ui8, (int32_t)(pos * 1000000.0));
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_POS << 8), &msg);
 }
 
@@ -61,8 +82,8 @@ void vesc_set_pos(uint8_t controller_id, float pos) {
  * The relative current value, range [-1.0 1.0]
  */
 void vesc_set_current_rel(uint8_t controller_id, float current_rel) {
-    can_msg msg;
-    msg.in[0] = (int32_t)(current_rel * 100000.0);
+    can_msg msg = {0};
+	buffer_append_float32(msg.ui8, current_rel, 1e5);
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_CURRENT_REL << 8), &msg);
 }
 
@@ -77,7 +98,7 @@ void vesc_set_current_rel(uint8_t controller_id, float current_rel) {
  */
 void vesc_set_current_brake_rel(uint8_t controller_id, float current_rel) {
     can_msg msg;
-    msg.in[0] = (int32_t) (current_rel * 100000.0);
+	buffer_append_float32(msg.ui8, current_rel, 1e5);
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_CURRENT_BRAKE_REL << 8), &msg);
 }
 
@@ -91,8 +112,8 @@ void vesc_set_current_brake_rel(uint8_t controller_id, float current_rel) {
  * The handbrake current value
  */
 void vesc_set_handbrake(uint8_t controller_id, float current) {
-    can_msg msg;
-    msg.in[0] = (int32_t) (current * 100.0);
+    can_msg msg = {0};
+	buffer_append_float32(msg.ui8, current, 1e3);
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_CURRENT_HANDBRAKE << 8), &msg);
 }
 
@@ -107,7 +128,7 @@ void vesc_set_handbrake(uint8_t controller_id, float current) {
  */
 void vesc_set_handbrake_rel(uint8_t controller_id, float current_rel) {
     can_msg msg;
-    msg.in[0] = (int32_t) (current_rel * 100000.0);
+	buffer_append_float32(msg.ui8, current_rel, 1e5);
 	can_ext_send_msg(controller_id | ((uint32_t)CAN_PACKET_SET_CURRENT_HANDBRAKE_REL << 8), &msg);
 }
 #endif // EN_VESC_MOTOR_DRIVER
