@@ -6,9 +6,61 @@
 #include "mtr_driver.h"
 #include <stdlib.h>
 
+void cmd_kick_spr_free(int argc, char *argv[]);
+
 void cmd_magnet_toggle(int argc, char *argv[]);
 void cmd_magnet_set(int argc, char *argv[]);
 void cmd_magnet_free(int argc, char *argv[]);
+
+void cmd_mag_mtr_free(int argc, char *argv[]);
+void cmd_mag_mtr_up_duty(int argc, char *argv[]);
+void cmd_mag_mtr_up_speed(int argc, char *argv[]);
+void cmd_mag_mtr_up_pos(int argc, char *argv[]);
+
+void cmd_spr_mtr_back(int argc, char *argv[]);
+
+void cmd_kick_spr_free(int argc, char *argv[]) {
+    uprintf("spring free\r\n");
+    kick_spring_free();
+}
+
+void cmd_mag_mtr_up_duty(int argc, char *argv[]) {
+    if (argc == 2) {
+        int arg = atoi(argv[1]);
+        uprintf("mag mtr up test: duty %d\r\n", arg);
+        mag_mtr_up_test(MMTR_DUTY, arg);
+    }
+}
+
+void cmd_mag_mtr_up_speed(int argc, char *argv[]) {
+    if (argc == 2) {
+        int arg = atoi(argv[1]);
+        uprintf("mag mtr up test: speed %d\r\n", arg);
+        mag_mtr_up_test(MMTR_SPEED, arg);
+    }
+}
+
+void cmd_mag_mtr_up_pos(int argc, char *argv[]) {
+    if (argc == 2) {
+        int arg = atoi(argv[1]);
+        uprintf("mag mtr up test: pos %d\r\n", arg);
+        mag_mtr_up_test(MMTR_POS, arg);
+    }
+}
+
+void cmd_mag_mtr_free(int argc, char *argv[]) {
+    md_set_duty(MAG_MTR_SID, 0);
+    magnet_free();
+    uprintf("mag mtr free\r\n");
+}
+
+void cmd_spr_mtr_back(int argc, char *argv[]) {
+    if (argc == 2) {
+        uint32_t arg = (uint32_t)atoi(argv[1]);
+        uprintf("spring mtr back: time %d\r\n", arg);
+        spr_mtr_back(arg);
+    }
+}
 
 #ifdef SL_MOTOR_DRIVER
 #ifdef EN_VESC_MOTOR_DRIVER
@@ -171,6 +223,13 @@ void cmd_func_init(void) {
     cmd_add("magtog", "magnet toggle", cmd_magnet_toggle);
     cmd_add("magset", "magnet set", cmd_magnet_set);
     cmd_add("magfree", "magnet free", cmd_magnet_free);
+
+    cmd_add("mmup_free", "", cmd_mag_mtr_free);
+    cmd_add("mmup_duty", "mag mtr up duty", cmd_mag_mtr_up_duty);
+    cmd_add("mmup_speed", "", cmd_mag_mtr_up_speed);
+    cmd_add("mmup_pos", "", cmd_mag_mtr_up_pos);
+
+    cmd_add("smback", "spring mtr back", cmd_spr_mtr_back);
 
     #ifdef SL_MOTOR_DRIVER
     #ifdef EN_MOTOR_DRIVER

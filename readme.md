@@ -6,6 +6,11 @@
 
 两者均采用将中断回调的实际执行函数分别注册在相关hash表中。中断中仅作相关flag转换
 
+## TODO:
+
+- [ ] relay moduel
+- [ ] old cmd frame (may work better)
+
 TODO: flag管理,i2c以及一些其他通信,内存管理,小型os
 
 ## 不同开发平台目录配置
@@ -31,7 +36,7 @@ TODO: flag管理,i2c以及一些其他通信,内存管理,小型os
 - 目前platformio直接编译 窗口输出会有奇怪问题
 - 暂不推荐使用
 
-## 使用需添加代码说明
+## 使用需添加代码说明(V0.1)
 
 - 串口及CAN配置使用STM32Cube配置
 - 使用时在main的Cube相关初始化都结束之后调用初始化函数

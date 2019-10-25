@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#define BUCKET_SIZE 19
+#define BUCKET_SIZE 31
 
 typedef struct HashNode{
 	const void * key;

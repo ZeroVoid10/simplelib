@@ -36,8 +36,10 @@ extern "C" {
 #define SL_COMP_V01					    // 兼容V0.1版本
 
 /* Motor Driver Configuration -----------------------------------------------------*/
+#ifdef SL_MOTOR_DRIVER
 #define EN_MOTOR_DRIVER                 // 使能HX 驱动卡
 #define EN_VESC_MOTOR_DRIVER             // 使能Benjamin VESC驱动卡
+#endif // SL_MOTOR_DRIVER
 
 /* Command Configuration -----------------------------------------------------*/
 #ifdef SL_CMD_DMA

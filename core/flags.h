@@ -13,7 +13,12 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
+extern uint8_t _5ms;
 extern int send_wave_flag;
+extern uint8_t kick_test_flag;
+extern uint8_t test_flag;
 
 #ifdef __cplusplus
 }
