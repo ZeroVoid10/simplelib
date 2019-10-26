@@ -154,4 +154,5 @@ void md_set_position(uint16_t id, int position) {
     msg.in[1] = position;
     can_send_msg(id, &msg);
 }
+
 #endif // EN_MOTRO

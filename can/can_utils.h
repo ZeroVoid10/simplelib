@@ -17,6 +17,8 @@ extern "C" {
 #include "simplelib_cfg.h"
 #ifdef SL_CAN
 
+// TODO: ZeroVoid	due:10/28	优化CAN callback,增加保存can数据参数.
+
 typedef union{
     char ch[8];
     uint8_t ui8[8];
