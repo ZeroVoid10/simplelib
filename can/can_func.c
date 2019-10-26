@@ -19,8 +19,8 @@ void can_func_init() {
 }
 
 void can_get_mag_mtr(can_msg *data) {
-    mag_mtr_can_state.speed = data->fl[MDP_SPEED];
-    mag_mtr_can_state.position = data->fl[MDP_POSITION];
+    kick_ctrl.mag_mtr_can_state.speed = data->fl[MDP_SPEED];
+    kick_ctrl.mag_mtr_can_state.position = data->fl[MDP_POSITION];
 }
 
 #ifdef SL_DEBUG

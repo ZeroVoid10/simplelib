@@ -12,31 +12,42 @@ void cmd_magnet_toggle(int argc, char *argv[]);
 void cmd_magnet_set(int argc, char *argv[]);
 void cmd_magnet_free(int argc, char *argv[]);
 
+void cmd_kick_test_reset(int argc, char *argv[]);
 void cmd_mag_mtr_free(int argc, char *argv[]);
-void cmd_mag_mtr_up_duty(int argc, char *argv[]);
+//void cmd_mag_mtr_up_duty(int argc, char *argv[]);
 void cmd_mag_mtr_up_speed(int argc, char *argv[]);
 void cmd_mag_mtr_up_pos(int argc, char *argv[]);
 
 void cmd_spr_mtr_back(int argc, char *argv[]);
 
-void cmd_kick_spr_free(int argc, char *argv[]) {
-    uprintf("spring free\r\n");
-    kick_spring_free();
+void cmd_kick_test_reset(int argc, char *argv[]) {
+    uprintf("reset kick test\r\n");
+    kick_test_reset(&kick_ctrl);
 }
 
+void cmd_kick_spr_free(int argc, char *argv[]) {
+    uprintf("spring free\r\n");
+    kick_test_flag &= KICK_SPR_FREE_MSK;
+}
+
+/*
 void cmd_mag_mtr_up_duty(int argc, char *argv[]) {
     if (argc == 2) {
         int arg = atoi(argv[1]);
         uprintf("mag mtr up test: duty %d\r\n", arg);
-        mag_mtr_up_test(MMTR_DUTY, arg);
+        kick_ctrl.mag_mtr_up_arg = arg;
+        kick_ctrl.mag_mtr_mode = MMTR_DUTY;
+        kick_test_flag &= MAG_MTR_UP_DUTY_MSK;
     }
-}
+}*/
 
 void cmd_mag_mtr_up_speed(int argc, char *argv[]) {
     if (argc == 2) {
         int arg = atoi(argv[1]);
         uprintf("mag mtr up test: speed %d\r\n", arg);
-        mag_mtr_up_test(MMTR_SPEED, arg);
+        kick_ctrl.mag_mtr_up_arg = arg;
+        kick_ctrl.mag_mtr_mode = MMTR_SPEED;
+        kick_test_flag &= MAG_MTR_UP_SPEED_MSK;
     }
 }
 
@@ -44,7 +55,9 @@ void cmd_mag_mtr_up_pos(int argc, char *argv[]) {
     if (argc == 2) {
         int arg = atoi(argv[1]);
         uprintf("mag mtr up test: pos %d\r\n", arg);
-        mag_mtr_up_test(MMTR_POS, arg);
+        kick_ctrl.mag_mtr_up_arg = arg;
+        kick_ctrl.mag_mtr_mode = MMTR_POS;
+        kick_test_flag &= MAG_MTR_UP_SPEED_MSK;
     }
 }
 
@@ -58,7 +71,8 @@ void cmd_spr_mtr_back(int argc, char *argv[]) {
     if (argc == 2) {
         uint32_t arg = (uint32_t)atoi(argv[1]);
         uprintf("spring mtr back: time %d\r\n", arg);
-        spr_mtr_back(arg);
+        kick_ctrl.spr_mtr_back_time = arg;
+        kick_test_flag &= SPR_MTR_BACK_MSK;
     }
 }
 
@@ -225,7 +239,7 @@ void cmd_func_init(void) {
     cmd_add("magfree", "magnet free", cmd_magnet_free);
 
     cmd_add("mmup_free", "", cmd_mag_mtr_free);
-    cmd_add("mmup_duty", "mag mtr up duty", cmd_mag_mtr_up_duty);
+    //cmd_add("mmup_duty", "mag mtr up duty", cmd_mag_mtr_up_duty);
     cmd_add("mmup_speed", "", cmd_mag_mtr_up_speed);
     cmd_add("mmup_pos", "", cmd_mag_mtr_up_pos);
 
