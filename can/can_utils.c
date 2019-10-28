@@ -26,7 +26,7 @@ CAN_RxHeaderTypeDef RxHeader;
 uint32_t TxMailbox;
 can_msg can_rx_data;
 can_msg can_tx_data;
-uint32_t std_id[] = {324, 325};
+uint32_t std_id[] = {};
 //uint32_t ext_id[] = {};
 
 static can_msg rx_buffer = {0};

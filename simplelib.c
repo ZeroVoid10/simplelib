@@ -11,6 +11,7 @@
 
 #include "simplelib.h"
 #include "flags.h"
+#include "kick.h"
 
 asm(".global _printf_float");
 
@@ -38,7 +39,8 @@ void simplelib_run(void) {
         can_exc_callback_flag = 0;
     }
     if (send_wave_flag) {
-        send_wave(0,1,2,3);
+        send_wave(kick_ctrl.mag_mtr_can_state.speed, kick_ctrl.mag_mtr_up_arg, 
+                  kick_ctrl.mag_mtr_can_state.position, kick_ctrl.mag_mtr_up_pos);
         HAL_Delay(10);
     }
 }

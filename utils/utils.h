@@ -7,6 +7,7 @@ extern "C" {
 
 #include "simplelib_cfg.h"
 #ifdef SL_UTILS
+#include "math.h"
 
 /**
  * @brief	宏数据处理函数
@@ -15,6 +16,7 @@ extern "C" {
 #define Limit(value,max)     if(value>max)value=max;else if(value<-max)value=-max
 #define Min(A, B)            ((A) <= (B) ? (A):(B))
 #define Max(A, B)			 ((A) >= (B) ? (A):(B))
+#define PI					 (acos(-1))
 
 #define SL_OK				 0
 #define SL_ERROR			 1
