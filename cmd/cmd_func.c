@@ -29,7 +29,8 @@ void cmd_kick_test_reset(int argc, char *argv[]) {
 }
 
 void cmd_kick_stata_show(int argc, char *argv[]) {
-    uprintf("state %d\r\nmag_mtr pos %f\r\nmag_mtr_state %d\r\nmag_state %d\r\n", kick_ctrl.state, kick_ctrl.mag_mtr_can_state.position, kick_ctrl.mag_mtr_state, kick_ctrl.magnet_state);
+    uprintf("\nstate %d\r\nmag_mtr pos %f\r\nsrp mtr pos: %f\r\nmag_mtr_state %d\r\nmag_state %d\r\n", 
+            kick_ctrl.state, kick_ctrl.mag_mtr_can_state.position, kick_ctrl.spr_mtr_pos, kick_ctrl.mag_mtr_state, kick_ctrl.magnet_state);
     uprintf("spr back duty %d\r\nspr free duty %d\r\n", kick_ctrl.spr_mtr_back_duty, kick_ctrl.spr_mtr_free_duty);
     uprintf("up time %d\r\nmag delay time %d\r\n spr back time %d\r\nspr trans time %d\r\n", kick_ctrl.mag_mtr_up_time, kick_ctrl.mag_delay_time, kick_ctrl.spr_mtr_back_time, kick_ctrl.spr_trans_time);
 }
@@ -103,9 +104,9 @@ void cmd_mag_mtr_free(int argc, char *argv[]) {
 
 void cmd_spr_mtr_back(int argc, char *argv[]) {
     if (argc == 2) {
-        uint32_t arg = (uint32_t)atoi(argv[1]);
-        uprintf("spring mtr back: time %d\r\n", arg);
-        kick_ctrl.spr_mtr_back_time = arg;
+        float arg = (uint32_t)atof(argv[1]);
+        uprintf("spring mtr back pos: %f\r\n", arg);
+        kick_ctrl.spr_mtr_kick_pos = arg;
         kick_ctrl.state = KICK_MAG_CONNECTED;
         kick_test_flag = 0;
         kick_test_flag |= SPR_MTR_BACK_MSK;

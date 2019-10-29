@@ -4,18 +4,18 @@
  extern "C" {
 #endif
 /*iSPI1*/
-#define iSPI1_CSN_Pin GPIO_PIN_15
-#define iSPI1_CSN_GPIO_Port GPIOC
-#define iSPI1_MOSI_Pin GPIO_PIN_7
-#define iSPI1_MOSI_GPIO_Port GPIOA
-#define iSPI1_MISO_Pin GPIO_PIN_6
-#define iSPI1_MISO_GPIO_Port GPIOA
-#define iSPI1_SCK_Pin GPIO_PIN_5
-#define iSPI1_SCK_GPIO_Port GPIOA
-#define iSPI1_CS_Enable() 	HAL_GPIO_WritePin(iSPI1_CSN_GPIO_Port, iSPI1_CSN_Pin, GPIO_PIN_RESET)
-#define iSPI1_CS_Disable() 	HAL_GPIO_WritePin(iSPI1_CSN_GPIO_Port, iSPI1_CSN_Pin, GPIO_PIN_SET)
-#define iSPI1_CLK_Enable() 	HAL_GPIO_WritePin(iSPI1_SCK_GPIO_Port, iSPI1_SCK_Pin, GPIO_PIN_SET                                                                                                                 )
-#define iSPI1_CLK_Disable() 	HAL_GPIO_WritePin(iSPI1_SCK_GPIO_Port, iSPI1_SCK_Pin, GPIO_PIN_RESET)
+#define iSPI1_CSN_Pin                       GPIO_PIN_15
+#define iSPI1_CSN_GPIO_Port                 GPIOF
+#define iSPI1_SCK_Pin                       GPIO_PIN_14
+#define iSPI1_SCK_GPIO_Port                 GPIOF
+#define iSPI1_MISO_Pin                      GPIO_PIN_13
+#define iSPI1_MISO_GPIO_Port                GPIOF
+#define iSPI1_MOSI_Pin                      GPIO_PIN_12
+#define iSPI1_MOSI_GPIO_Port                GPIOF
+#define iSPI1_CS_Enable() 	                HAL_GPIO_WritePin(iSPI1_CSN_GPIO_Port, iSPI1_CSN_Pin, GPIO_PIN_RESET)
+#define iSPI1_CS_Disable() 	                HAL_GPIO_WritePin(iSPI1_CSN_GPIO_Port, iSPI1_CSN_Pin, GPIO_PIN_SET)
+#define iSPI1_CLK_Enable() 	                HAL_GPIO_WritePin(iSPI1_SCK_GPIO_Port, iSPI1_SCK_Pin, GPIO_PIN_SET                                                                                                                 )
+#define iSPI1_CLK_Disable() 	            HAL_GPIO_WritePin(iSPI1_SCK_GPIO_Port, iSPI1_SCK_Pin, GPIO_PIN_RESET)
 /*iSPI3*/
 #define iSPI3_CSN_Pin GPIO_PIN_14
 #define iSPI3_CSN_GPIO_Port GPIOC
