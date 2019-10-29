@@ -21,6 +21,7 @@ void cmd_mag_mtr_up_lp(int argc, char *argv[]);
 void cmd_spr_mtr_back(int argc, char *argv[]);
 void cmd_kick_spr_free(int argc, char *argv[]);
 void cmd_cal_spr_duty(int argc, char *argv[]);
+void cmd_cal_mag_speed(int argc, char *argv[]);
 
 void cmd_kick_test_reset(int argc, char *argv[]) {
     uprintf("reset kick test\r\n");
@@ -119,6 +120,17 @@ void cmd_cal_spr_duty(int argc, char *argv[]) {
         test.mag_mtr_can_state.speed = speed;
         test.mag_mtr_can_state.position = pos;
         uprintf("cal duty: %f\r\n", set_spr_mtr_duty(&test));
+    }
+}
+
+void cmd_cal_mag_speed(int argc, char *argv[]) {
+    if (argc == 3) {
+        float free_duty = atof(argv[1]);
+        float pos = atof(argv[2]);
+        struct kick_controller test = {0};
+        test.spr_mtr_free_duty = free_duty;
+        test.mag_mtr_can_state.position = pos;
+        uprintf("cal speed: %f\r\n", set_mag_mtr_speed(&test));
     }
 }
 
@@ -293,6 +305,7 @@ void cmd_func_init(void) {
     cmd_add("kr", "kick reset", cmd_kick_test_reset);
     cmd_add("ks", "kick state", cmd_kick_stata_show);
     cmd_add("spr_duty", "call spr mtr duty", cmd_cal_spr_duty);
+    cmd_add("mag_speed", "", cmd_cal_mag_speed);
     cmd_add("mmup_lp", "", cmd_mag_mtr_up_lp);
 
     #ifdef SL_MOTOR_DRIVER
