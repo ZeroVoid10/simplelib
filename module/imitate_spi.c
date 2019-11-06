@@ -14,6 +14,13 @@
 #include "tim.h"
 #include "usart.h"
 
+void Delay(uint32_t delay_time)
+{
+  TIM6->CNT=0;
+  HAL_TIM_Base_Start(&htim6);
+  while(TIM6->CNT < delay_time);
+  HAL_TIM_Base_Stop(&htim6);
+}
 
 //!函数表未改
 /**

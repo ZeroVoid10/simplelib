@@ -3,6 +3,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
+#include <stdint.h>
 /*iSPI1*/
 #define iSPI1_CSN_Pin                       GPIO_PIN_15
 #define iSPI1_CSN_GPIO_Port                 GPIOF
