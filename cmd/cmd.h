@@ -36,7 +36,7 @@
 #ifdef SL_NRF_COMM
 #define DMA_BUFFER_SIZE (32-NRF_PCK_HEADER_SIZE)
 #else
-#define DMA_BUffER_SIZE 99
+#define DMA_BUFFER_SIZE 99
 #endif // SL_NRF_COMM
 
 extern UART_HandleTypeDef CMD_USART;
