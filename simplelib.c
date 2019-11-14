@@ -4,14 +4,13 @@
  * Author:			ZeroVoid
  * Description:		None
  * Bug:				None
- * Version:			0.1
+ * Version:			0.2.1
  * Data:			2019/09/19 Thu 19:35
  * Todo:			None
  *******************************************************************************/
 
 #include "simplelib.h"
 #include "flags.h"
-#include "kick.h"
 
 asm(".global _printf_float");
 
@@ -22,25 +21,39 @@ asm(".global _printf_float");
  * @return	None
  */
 void simplelib_init(UART_HandleTypeDef *cmd_usart, CAN_HandleTypeDef *hcan) {
-    usart_DMA_init(cmd_usart);
-    can_init(hcan);
+    #ifdef SL_USART_DMA
+    if (cmd_usart != NULL) {
+        usart_DMA_init(cmd_usart);
+    }
+    #endif // SL_USART_DMA
+
+    #ifdef SL_CMD
     cmd_func_init();
-    can_func_init();
     uprintf("simplelib init done\r\n");
+    #endif // SL_CMD
+    
+    #ifdef SL_CAN
+    if (hcan != NULL) {
+        can_init(hcan);
+        can_func_init();
+    }
+    #endif // SL_CAN
 }
 
 void simplelib_run(void) {
+    #ifdef SL_CMD
     if (DMA_RxOK_Flag) {
         usart_exc_DMA();
         DMA_RxOK_Flag = 0;
     }
+    #endif // SL_CMD
+    #ifdef SL_CAN
     if (can_exc_callback_flag) {
         can_exc_callback();
         can_exc_callback_flag = 0;
     }
+    #endif // SL_CAN
     if (send_wave_flag) {
-        send_wave(kick_ctrl.mag_mtr_can_state.speed, kick_ctrl.mag_mtr_up_arg, 
-                  kick_ctrl.mag_mtr_can_state.position, kick_ctrl.mag_mtr_up_pos);
-        HAL_Delay(10);
+        //HAL_Delay(10);
     }
 }

@@ -15,9 +15,14 @@
 
 #include "simplelib_cfg.h"
 
-#ifdef SL_CMD_DMA
+#ifdef SL_CMD
 #include "main.h"
 #include "usart.h"
+
+#ifdef SL_NRF_COMM
+#include "nrf_comm.h"
+#endif // SL_NRF_COMM
+
 #if defined(STM32F407xx) || defined(STM32F405xx)
 #include "stm32f4xx_hal.h"
 #endif // STM32F407xx
@@ -26,8 +31,13 @@
 #define MAX_CMD_INFO_LENGTH 64
 #define MAX_CMD_LINE_LENGTH 128
 #define MAX_ARGC 12   //
-#define DMA_BUFFER_SIZE 99
 #define PRINT_BUFFER_SIZE 101
+
+#ifdef SL_NRF_COMM
+#define DMA_BUFFER_SIZE (32-NRF_PCK_HEADER_SIZE)
+#else
+#define DMA_BUffER_SIZE 99
+#endif // SL_NRF_COMM
 
 extern UART_HandleTypeDef CMD_USART;
 extern int DMA_RxOK_Flag;
@@ -48,12 +58,13 @@ int cmd_exec(int argc,char *argv[]);
 void cmd_help_func(int argc,char *argv[]);   
 void cmd_init(void);
 void cmd_add(char *cmd_name, char *cmd_usage, void (*cmd_func)(int argc, char *argv[]));
+void cmd_err_arg_default_handle(char *prompt);
 
 void send_wave(float arg1, float arg2, float arg3, float arg4);
 void uprintf(char *fmt, ...);
 void uprintf_to(UART_HandleTypeDef *huart, char *fmt, ...);
 
-#endif // SL_USART
+#endif // SL_CMD
    
 #ifdef __cplusplus
 }

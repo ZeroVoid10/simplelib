@@ -1,6 +1,16 @@
 #include "stmflash.h"
+#ifdef SL_FLASH
+
 #include "math.h"
+#include <string.h>
+#ifdef SL_CMD
 #include "cmd.h"
+#endif // SL_CMD
+
+#ifdef SL_NRF
+#include "nrf24l01.h"
+#endif // SL_NRF
+
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F429开发板
@@ -17,6 +27,61 @@
 //faddr:读地址 
 //返回值:对应数据.
 float flash_data[FLASH_SIZE]={0};
+
+#ifdef STM32F072xB
+
+void write_prams() {
+	uint32_t error;
+	FLASH_EraseInitTypeDef erase_init;
+
+	HAL_FLASH_Unlock();
+	erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
+	erase_init.PageAddress = FLASH_SAVE_ADDR;
+	erase_init.NbPages = 4;
+
+	if (HAL_FLASHEx_Erase(&erase_init, &error) != HAL_OK) {
+		#ifdef SL_CMD
+		uprintf("[ERROR] flash data.\r\n");
+		#endif // SL_CMD
+		return;
+	}
+
+	uint32_t temp;
+	for (int i = 0; i < FLASH_SIZE; i++) {
+		temp = *((uint32_t *)(flash_data + i));
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 
+						FLASH_SAVE_ADDR + i*4, temp);
+	}
+	HAL_FLASH_Unlock();
+	#ifdef SL_CMD
+	uprintf("[INFO] flash: write ok.\r\n");
+	#endif // SL_CMD
+}
+
+void load_prams() {
+	for (int i = 0; i<FLASH_SIZE; i++) {
+		flash_data[i] = *((float *)(FLASH_SAVE_ADDR + i*4));
+		#ifdef SL_CMD
+		uprintf("[INFO] data[%2d]: %.6f\r\n", i, flash_data[i]);
+		#endif // SL_CMD
+	}
+
+	#ifdef SL_NRF
+	// TODO: ZeroVoid	太过丑陋的代码, 非常需要改进
+	memcpy(nrf_tx_addr, flash_data, 5); // tx 发送地址
+	memcpy(nrf_rx_addr, ((uint8_t *)flash_data) + 5, 5); // rx pipe 0 地址
+	memcpy(nrf_rx_addr[1], ((uint8_t *)flash_data) + 10, 5); // rx pipe 1 地址
+	memcpy(nrf_rx_addr_set, ((uint8_t *)flash_data) + 15, 6); // rx pipe enable set
+	for (int i = 2; i <= 5; i++) {
+		memcpy(nrf_rx_addr[i], ((uint8_t*)flash_data) + 19 + i, 1);
+	}
+	memcpy(&nrf_handle.nrf_addr_len, ((uint8_t*)flash_data) + NRF_ADDR_LEN_OFFSET, 1);
+	#endif // SL_NRF
+}
+
+#endif // STM32F072xB
+
+#ifdef STM32F407xx
 u8 STMFLASH_GetFlashSector(u32 addr);
 
 void write_prams()
@@ -160,3 +225,6 @@ void Test_Write(u32 WriteAddr,u32 WriteData)
 {
 	STMFLASH_Write(WriteAddr,&WriteData,1);//写入一个字 
 }
+#endif // STM32F407xx
+
+#endif // SL_FLASH
