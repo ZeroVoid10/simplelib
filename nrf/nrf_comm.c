@@ -78,6 +78,9 @@ void nrf_main(void) {
     case NRF_MAX_RT_CALLBACK:
         // _nrf_max_rt_callback();
         nrf_max_rt_callback(nrf_handle.tx_data, nrf_handle.tx_len);
+        #ifdef SL_NRF_PC
+        uprintf("[NRF] Max Retry\r\n");
+        #endif // SL_NRF_PC
         memset(nrf_tx_data, 0, 32);
         nrf_flow_state = NRF_IDLE;
         break;
@@ -127,9 +130,18 @@ void _nrf_receive_callback(uint8_t *data, int len) {
 void nrf_comm_cmd(NRF_Handle *handle) {
     uint8_t arg = handle->rx_data[NRF_PCK_HEADER_SIZE]&0x0F;
     uint8_t cmd = handle->rx_data[NRF_PCK_HEADER_SIZE] >> 4;
+    char str_tmp[] = "Ping OK\r\n";
     switch (cmd) {
     case NRF_COMM_CMD_ALL_CAN:
         nrf_all_can_send = arg;
+        break;
+    
+    case NRF_COMM_CMD_PING:
+        memcpy(nrf_tx_data + NRF_PCK_HEADER_SIZE, str_tmp, 10);
+        nrf_handle.nrf_data_from = NRF_SPI;
+        nrf_handle.nrf_data_to = NRF_UART;
+        _nrf_comm_send(nrf_tx_data, 12);
+        HAL_GPIO_TogglePin(IND_LED_GPIO_Port, IND_LED_Pin);
         break;
     
     default:

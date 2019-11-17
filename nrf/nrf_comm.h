@@ -42,6 +42,7 @@ extern "C" {
 #define NRF_PCK_SIZE                                (32-NRF_PCK_HEADER_SIZE)
 #define NRF_CAN_SID                                 230 // ASCII NRF 加和
 #define NRF_COMM_CMD_ALL_CAN                        10
+#define NRF_COMM_CMD_PING                           5
 
 #define NRF_COMM_DATA_TO_POS					    0 // 
 #define NRF_COMM_DATA_FROM_POS                      4

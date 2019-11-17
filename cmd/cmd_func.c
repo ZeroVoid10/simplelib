@@ -140,6 +140,18 @@ void cmd_nrf_get_all_can(int argc, char *argv[]) {
         _nrf_comm_send(nrf_handle.tx_data, 3);
     }
 }
+
+void cmd_nrf_ping(int argc, char *argv[]) {
+    nrf_tx_data[NRF_PCK_HEADER_SIZE] = 
+                    (NRF_COMM_CMD_PING<<4);
+    if (argc == 2) {
+        nrf_tx_data[NRF_PCK_HEADER_SIZE] = 
+                    (NRF_COMM_CMD_PING<<4)|((uint8_t)atoi(argv[1]));
+    }
+    nrf_handle.nrf_data_from = NRF_UART;
+    nrf_handle.nrf_data_to = NRF_SPI;
+    _nrf_comm_send(nrf_handle.tx_data, 3);
+}
 #endif // SL_NRF_COMM
 
 #ifdef SL_MOTOR_DRIVER
@@ -301,6 +313,7 @@ void cmd_func_init(void) {
     cmd_add("nrf_rx_pipe_dis", "disblae nrf rx pipes", cmd_nrf_disable_rx_pipe);
     cmd_add("nrf_state", "get nrf state", cmd_nrf_get_state);
     cmd_add("nrf_set_rcan", "set remote can send", cmd_nrf_get_all_can);
+    cmd_add("nrf_ping", "ping test", cmd_nrf_ping);
     #else
     cmd_add("hello", "just", cmd_hello_func);
     cmd_add("wave", "", cmd_wave_test);

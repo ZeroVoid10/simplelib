@@ -26,6 +26,7 @@ extern "C" {
 #define SL_FLASH                        // Flash 模块
 #define SL_NRF                          // NRF通信模块
 #define SL_NRF_COMM                     // NRF 通信通信协议
+// #define SL_NRF_PC
 // #define SL_MOTOR_DRIVER					// 驱动卡模块
 #define SL_UTILS					    // 通用工具函封装
 // #define SL_IMI_SPI                      // 软件SPI封装
