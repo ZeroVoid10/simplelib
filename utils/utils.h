@@ -17,6 +17,7 @@ extern "C" {
 #define Min(A, B)            ((A) <= (B) ? (A):(B))
 #define Max(A, B)			 ((A) >= (B) ? (A):(B))
 #define PI					 (acos(-1))
+#define ARRAY_SIZE(arr)		 (sizeof(arr)/sizeof((arr)[0]))
 
 #define SL_OK				 0
 #define SL_ERROR			 1

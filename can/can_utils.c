@@ -70,14 +70,12 @@ void can_exc_callback(void) {
     if (callback_func) {
         callback_func(&rx_buffer);
     }
-    if (can_rx_callback_flag) {
-        #ifdef SL_NRF_COMM
-        if (nrf_all_can_send || rx_id == NRF_CAN_SID) {
-            _can_rx_nrf_callback(&rx_id, &rx_buffer);
-        }
-        #endif // SL_NRF_COMM
-        can_rx_callback(&rx_buffer);
+    #ifdef SL_NRF_COMM
+    if (nrf_all_can_send || rx_id == NRF_CAN_SID) {
+        _can_rx_nrf_callback(&rx_id, &rx_buffer);
     }
+    #endif // SL_NRF_COMM
+    can_rx_callback(&rx_buffer);
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
@@ -137,7 +135,7 @@ __weak void can_rx_callback(can_msg *data) {}
 void CAN_config(CAN_HandleTypeDef *hcan) {
     
     // FIXME: ZeroVoid	2019/11/13	 len 无法为零, 从而不过滤CAN
-    can_std_mask_filter_conf(hcan, std_id, sizeof(std_id)/sizeof(std_id[0]), 0);
+    can_std_mask_filter_conf(hcan, std_id, 0, 0);
     //can_std_list_filter_conf(hcan, 325, 0);
 
     /* Start the CAN peripheral */

@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+#include "sl_def.h"
+
 /*******************************************************************************
  * SimpleLib Configuration
  * @note	SL Simplelib or Stm32Lib
@@ -26,6 +28,7 @@ extern "C" {
 #define SL_FLASH                        // Flash 模块
 #define SL_NRF                          // NRF通信模块
 #define SL_NRF_COMM                     // NRF 通信通信协议
+#define SL_NRF_COMM_CMD
 // #define SL_NRF_PC
 // #define SL_MOTOR_DRIVER					// 驱动卡模块
 #define SL_UTILS					    // 通用工具函封装
@@ -67,10 +70,12 @@ extern "C" {
 
 /* NRF Configuration -----------------------------------------------------*/
 #ifdef SL_NRF
-// FIXME: ZeroVoid	2019/11/17	 spi DMA NRF not work
-// #define SL_NRF_DMA                      // 使用DMA通信
 #include "gpio.h"
 #include "spi.h"
+// FIXME: ZeroVoid	2019/11/17	 spi DMA NRF not work
+// #define SL_NRF_DMA                      // 使用DMA通信
+#define NRF_COMM_TX_PCK_FIFO_SIZE		16
+#define NRF_COMM_RX_PCK_FIFO_SIZE		16
 
 #ifdef STM32F072xB
 #define NRF_ADDR_COF					3 // 接收地址变化参数,方便测试
@@ -95,6 +100,9 @@ extern "C" {
 #endif // STM32F407xx
 
 #endif // SL_NRF
+
+/* Other Configuration -----------------------------------------------------*/
+#define SL_LOCKED_TIMEOUT               3
 
 #ifdef __cplusplus
 }
