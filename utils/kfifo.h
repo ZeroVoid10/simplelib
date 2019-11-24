@@ -28,12 +28,12 @@ struct __kfifo {
 // 不知道除了kfifo之外其他东西什么用
 #define __STRUCT_KFIFO_COMMON(datatype, recsize, ptrtype) \
     union { \
-        struct __kfifo kfifo; \
-        datatype	*type; \
-		const datatype	*const_type; \
-		char		(*rectype)[recsize]; \
-		ptrtype		*ptr; \
-		ptrtype const	*ptr_const; \
+        struct __kfifo 		kfifo; \
+        datatype			*type; \
+		const datatype		*const_type; \
+		char				(*rectype)[recsize]; \
+		ptrtype				*ptr; \
+		ptrtype const		*ptr_const; \
     }
 
 #define __STRUCT_KFIFO(type, size, recsize, ptrtype) \
@@ -149,13 +149,13 @@ __kfifo_uint_must_check_helper( \
 }) \
 )
 
-// remove smp_wmb(); 感觉不需要内存屏障
+// remove smp_wmb(); 感觉不需要内存屏障 & recsize, 使用中recsize均为0
+// size_t __recsize = sizeof(*__tmp->rectype);
 #define	kfifo_put(fifo, val) \
 ({ \
 	typeof((fifo) + 1) __tmp = (fifo); \
 	typeof(*__tmp->const_type) __val = (val); \
-	unsigned int __ret; \
-	size_t __recsize = sizeof(*__tmp->rectype); \
+	uint32_t __ret; \
 	struct __kfifo *__kfifo = &__tmp->kfifo; \
     __ret = !kfifo_is_full(__tmp); \
     if (__ret) { \
@@ -169,13 +169,12 @@ __kfifo_uint_must_check_helper( \
 	__ret; \
 })
 
-#define	kfifo_get(fifo, val) \
-__kfifo_uint_must_check_helper( \
+// __kfifo_uint_must_check_helper(
+#define	kfifo_get(fifo, val) (\
 ({ \
 	typeof((fifo) + 1) __tmp = (fifo); \
 	typeof(__tmp->ptr) __val = (val); \
-	unsigned int __ret; \
-	const size_t __recsize = sizeof(*__tmp->rectype); \
+	uint32_t __ret; \
 	struct __kfifo *__kfifo = &__tmp->kfifo; \
     __ret = !kfifo_is_empty(__tmp); \
     if (__ret) { \

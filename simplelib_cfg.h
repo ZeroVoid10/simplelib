@@ -76,6 +76,7 @@ extern "C" {
 // #define SL_NRF_DMA                      // 使用DMA通信
 #define NRF_COMM_TX_PCK_FIFO_SIZE		16
 #define NRF_COMM_RX_PCK_FIFO_SIZE		16
+// #define NRF_COMM_EN_EVERY_RX_CALLBACK
 
 #ifdef STM32F072xB
 #define NRF_ADDR_COF					3 // 接收地址变化参数,方便测试

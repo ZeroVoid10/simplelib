@@ -142,15 +142,17 @@ void cmd_nrf_get_all_can(int argc, char *argv[]) {
 }
 
 void cmd_nrf_ping(int argc, char *argv[]) {
-    nrf_tx_data[NRF_PCK_HEADER_SIZE] = 
-                    (NRF_COMM_CMD_PING<<4);
-    if (argc == 2) {
+    // nrf_tx_data[NRF_PCK_HEADER_SIZE] = (NRF_COMM_CMD_PING<<4);
+    /* if (argc == 2) {
         nrf_tx_data[NRF_PCK_HEADER_SIZE] = 
                     (NRF_COMM_CMD_PING<<4)|((uint8_t)atoi(argv[1]));
-    }
-    nrf_handle.nrf_data_from = NRF_UART;
-    nrf_handle.nrf_data_to = NRF_SPI;
-    _nrf_comm_send(nrf_handle.tx_data, 3);
+    } */
+    // nrf_handle.nrf_data_from = NRF_UART;
+    // nrf_handle.nrf_data_to = NRF_SPI;
+    // _nrf_comm_send(nrf_handle.tx_data, 3);
+    uint8_t msg = (NRF_COMM_CMD_PING<<4);
+    // nrf_comm_block_send(&msg, 1, NRF_UART, NRF_MCU); // small data work well
+    nrf_comm_send(&msg, 1, NRF_UART, NRF_MCU);
 }
 #endif // SL_NRF_COMM
 

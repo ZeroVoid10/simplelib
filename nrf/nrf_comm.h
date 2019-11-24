@@ -58,7 +58,8 @@ extern "C" {
 #define NRF_COMM_PCK_CNT_MSK                        0x0F
 #define NRF_COMM_PCK_INDEX_MSK                      0xF0
 
-#define NRF_COMM_SET_PCK_REFER_HOST(refer, host)    
+#define NRF_COMM_SET_PCK_REFER_HOST(pk,refer,host)  ((pk)->pck.data_refer_host = (refer<<4)|host)
+#define NRF_COMM_SET_PCK_CNT_INDEX(pk,cnt,index)    ((pk)->pck.data_cnt_index = (cnt<<4)|index)
 #define NRF_COMM_GET_PCK_HOST(pck)                  ((*((uint8_t*)(pck) + NRF_COMM_PCK_REFER_HOST_INDEX)) & NRF_COMM_PCK_HOST_MSK)
 #define NRF_COMM_GET_PCK_REFER(pck)                 (((*((uint8_t*)(pck) + NRF_COMM_PCK_REFER_HOST_INDEX)) & NRF_COMM_PCK_REFER_MSK)>>4)
 #define NRF_COMM_GET_PCK_CNT(pck)                   ((*((uint8_t*)(pck) + NRF_COMM_PCK_CNT_INDEX_INDEX)) & NRF_COMM_PCK_CNT_MSK)
@@ -76,7 +77,6 @@ typedef enum nrf_comm_way {
 
 /**
  * @brief	NRF main function control state
- * @note	目前只完成了回调部分函数
  */
 typedef enum nrf_flow_control {
 	NRF_IDLE,
@@ -107,19 +107,29 @@ typedef union _nrf_pck_u {
     struct _nrf_pck pck;
 } nrf_pck;
 
+/**
+ * @brief	NRF Package
+ */
+typedef struct _nrf_pck_wrap {
+    nrf_pck pck;
+    uint8_t len;
+} nrf_pck_wrapper;
+
 
 /*******************************************************************************
  * NRF Protocol Val
  *******************************************************************************/
 extern uint8_t nrf_tx_buffer[99];
 extern NRF_COMM_STATE nrf_flow_state;
+extern nrf_pck_wrapper nrf_tx_wrapper;
+extern nrf_pck_wrapper nrf_rx_wrapper;
 
 /*******************************************************************************
  * NRF Communication API
  *******************************************************************************/
 void nrf_main(void);
-void nrf_comm_send(uint8_t *data, int len);
-void nrf_comm_block_send(uint8_t *data, int len);
+void nrf_comm_send(uint8_t *data,uint32_t len, uint8_t refer, uint8_t host);
+void nrf_comm_block_send(uint8_t *data, uint32_t len, uint8_t refer, uint8_t host);
 
 /* Weak Functions -----------------------------------------------------*/
 void nrf_spi_receive_callback(uint8_t *data, int len);
